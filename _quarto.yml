@@ -2,10 +2,16 @@ project:
   type: website
   resources:
     - "images/"
-    - "../cex.h"
+  preview:
+    port: 8050
 
 website:
   title: "Cex - Comprehensively EXtended C Language"
+  #repo-url: "https://github.com/alexveden/cex_docs"
+  repo-actions:
+    - source
+    - edit 
+    - issue
   navbar:
     tools:
       - icon: github
