@@ -1,0 +1,322 @@
+---
+sidebar: false
+navbar: true
+css: _include/home.css
+page-layout: full
+format:
+  html:
+    minimal: true
+include-in-header:
+  - text: |
+      <script src="https://cdn.tailwindcss.com"></script> 
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+---
+
+```{=html}
+<div class="bg-gray-900 text-gray-100">
+
+<!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-gray-800 shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-semibold text-white">C<span class="text-blue-400">ex</span></div>
+
+                <!-- Desktop Navigation (hidden on mobile) -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/getting_started.html" class="text-gray-300 hover:text-white transition">Docs</a>
+                    <a href="/features.html" class="text-gray-300 hover:text-white transition">Features</a>
+                    <a href="/examples.html" class="text-gray-300 hover:text-white transition">Examples</a>
+                    <a href="/install.html" class="text-gray-300 hover:text-white transition">Installation</a>
+                    <a href="https://github.com/alexveden/cex" class="text-gray-300 hover:text-white transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-300 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Dropdown Menu (hidden by default) -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="/getting_started.html" class="text-gray-300 hover:text-white transition px-3 py-2 rounded-md">Docs</a>
+                    <a href="/features.html" class="text-gray-300 hover:text-white transition px-3 py-2 rounded-md">Features</a>
+                    <a href="/examples.html" class="text-gray-300 hover:text-white transition px-3 py-2 rounded-md">Examples</a>
+                    <a href="/install.html" class="text-gray-300 hover:text-white transition px-3 py-2 rounded-md">Installation</a>
+                    <a href="https://github.com/alexveden/cex" class="text-gray-300 hover:text-white transition px-3 py-2 rounded-md">
+                        <div class="flex items-center">
+                            <i class="fab fa-github mr-2"></i>
+                            <span>GitHub</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-20 bg-gradient-to-b from-gray-800 to-gray-900">
+        <div class="container mx-auto px-6 text-left">
+            <h1 class="text-2xl md:text-3xl font-bold mb-6">C<span class="text-blue-400">ex</span>.C - Comprehensively <span class="text-blue-400">Ex</span>tended C Language</h1>
+            <p class="text-1xl md:text-1xl text-gray-400 mb-6 text-center">No dependency, cross-platform, single header C language extension. Making old C c<span class="text-blue-400">ex</span>y again!</h2>
+            <div class="flex justify-end space-x-4">
+                <a href="/getting_started.html">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold text-sm transition duration-300">
+                        Get Started
+                    </button>
+                </a>
+                <a href="/install.html">
+                    <button class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold text-sm transition duration-300">
+                        Install
+                    </button>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature Card 1 -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <div class="text-blue-500 mb-4">
+                        <i class="fa-solid fa-c text-3xl"></i>   
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Single header C file</h3>
+                    <p class="text-gray-400">Still C source code, clang or gcc is all you need. No other dependencies.</p>
+                </div>
+                
+                <!-- Feature Card 2 -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <div class="text-green-500 mb-4">
+                        <i class="fa-solid fa-trowel-bricks text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Integrated build system</h3>
+                    <p class="text-gray-400">Write build logic in C, cross-platform build system. No more CMake pain.</p>
+                </div>
+                
+                <!-- Feature Card 3 -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <div class="text-purple-500 mb-4">
+                        <i class="fas fa-cogs text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Better C experience</h3>
+                    <p class="text-gray-400">Type safe and generic data structures, better strings, better IO, new memory management.</p>
+                </div>
+                
+                <!-- Feature Card 4 -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <div class="text-yellow-500 mb-4">
+                        <i class="fas fa-code text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Developer Friendly</h3>
+                    <p class="text-gray-400">Easy to start, easy to debug, LSP friendly. Tools for making your project cexy.</p>
+                </div>
+                
+                <!-- Feature Card 5 -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <div class="text-red-500 mb-4">
+                        <i class="fa-solid fa-ranking-star text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Code quality tools</h3>
+                    <p class="text-gray-400">Unit test engine, sanitizers and fuzzer support out of the box.</p>
+                </div>
+                
+                <!-- Feature Card 6 -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+                    <div class="text-pink-500 mb-4">
+                        <i class="fa-solid fa-code-branch text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">New way of doing C</h3>
+                    <p class="text-gray-400">Introducing modern practices: error handling, namespaces, type system, memory allocators, and more...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- C vs CEX Section -->
+<section id="examples" class="py-20 bg-gray-800">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">C vs CEX</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- C Column -->
+            <div class="bg-gray-700 p-6 rounded-lg">
+                <h3 class="text-2xl font-semibold mb-4 text-blue-400">C</h3>
+                <ul class="space-y-3 text-gray-300">
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        <span>Bare-bone language with DIY nature</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        <span>Bug prone manual memory management</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        <span>Overcomplicated 3rd party build systems</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        <span>Loose error handling and no tracebacks</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        <span>Opt-in code quality tools</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- CEX Column -->
+            <div class="bg-gray-700 p-6 rounded-lg">
+                <h3 class="text-2xl font-semibold mb-4 text-green-400">CEX</h3>
+                <ul class="space-y-3 text-gray-300">
+                    <li class="flex items-start">
+                        <span class="text-green-400 mr-2">•</span>
+                        <span>Type safe data structures, strings, IO</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-400 mr-2">•</span>
+                        <span>Allocator driven memory management with scoping</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-400 mr-2">•</span>
+                        <span>Builds itself, no dependencies, cross-platform builds</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-400 mr-2">•</span>
+                        <span>Convenient error handling with tracebacks</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-400 mr-2">•</span>
+                        <span>Unit tests, sanitizers and fuzzer included</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Philosophy Section -->
+<section id="philosophy" class="py-20 bg-gray-900">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">C<span class="text-blue-400">ex</span> Philosophy</h2>
+        
+        <div class="max-w-3xl mx-auto">
+            <ul class="space-y-6 text-gray-300">
+                <li class="flex items-start">
+                    <span class="text-blue-400 mr-3 text-xl">•</span>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-1">Never depends</h3>
+                        <p class="text-gray-400">Depencencies is a curse for a long-term longevity of a project. With Cex all is you need to start is a modern C compiler (gcc/clang) and cex.h file.</p>
+                    </div>
+                </li>
+                
+                <li class="flex items-start">
+                    <span class="text-blue-400 mr-3 text-xl">•</span>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-1">Simplicity is a virtue</h3>
+                        <p class="text-gray-400">Cex tries to make old C better, but without overengineering things. </p>
+                    </div>
+                </li>
+                
+                <li class="flex items-start">
+                    <span class="text-blue-400 mr-3 text-xl">•</span>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-1">Developer experience first</h3>
+                        <p class="text-gray-400">Cex maintains toolset which helping you in building, testing and maintaining your project seamlessly.</p>
+                    </div>
+                </li>
+                
+                <li class="flex items-start">
+                    <span class="text-blue-400 mr-3 text-xl">•</span>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-1">Long-term concervatism</h3>
+                        <p class="text-gray-400">Projects built with Cex should be compilable out of the box after 10 years they were released.</p>
+                    </div>
+                </li>
+                
+                <li class="flex items-start">
+                    <span class="text-blue-400 mr-3 text-xl">•</span>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white mb-1">80/20 Principle</h3>
+                        <p class="text-gray-400">Cex is focusing on smooth coding experience with solving 80% of generic problems. If you need something too fast, too small, too specialized - do it yourself, tailor other 20% for your specific needs.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+    <!-- Documentation Section -->
+    <section id="documentation" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16">Documentation</h2>
+            <p class="text-center text-gray-400 max-w-2xl mx-auto">
+CEX is designed as a standalone, single-header programming language with no dependencies other than the GCC/Clang compiler and libc. See documentation section for more information, examples and use cases.
+            </p>
+            <div class="flex justify-center space-x-4 py-4">
+                <a href="/getting_started.html">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold text-sm transition duration-300">
+                        Learn More
+                    </button>
+                <a>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+        <div class="container mx-auto px-6">
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2024-2025 Alex Veden (MIT license)</p>
+                <div class="flex space-x-6">
+                    <a href="https://github.com/alexveden/cex" class="text-gray-500 hover:text-white transition">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+```
+
+
+```{=html}
+<script>
+        // Mobile menu toggle functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            
+            // Change icon based on menu state
+            const icon = mobileMenuButton.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // Close menu when clicking on a link (optional)
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenuButton.querySelector('i').classList.remove('fa-times');
+                mobileMenuButton.querySelector('i').classList.add('fa-bars');
+            });
+        });
+    </script>
+```

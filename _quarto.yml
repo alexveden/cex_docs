@@ -1,0 +1,32 @@
+project:
+  type: website
+  resources:
+    - "images/"
+    - "../cex.h"
+
+website:
+  title: "Cex - Comprehensively EXtended C Language"
+  navbar:
+    tools:
+      - icon: github
+        href: https://github.com/alexveden/cex
+  sidebar:
+    style: "docked"
+    contents: auto
+
+  search: 
+    location: sidebar
+    type: textbox
+
+format:
+  html:
+    theme: darkly
+    css: _include/styles.css
+    toc: true
+    toc-location: body
+    highlight-style: github
+    syntax-definitions:
+      - _include/cex_syntax.xml 
+
+filters:
+- _include/callouts.lua

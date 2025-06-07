@@ -1,0 +1,98 @@
+<!-- Hero Section -->
+    <section class="hero text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-3">Hello Cex</h1>
+            <p class="lead mb-4">A powerful solution for your modern needs. Fast, reliable, and easy to use.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="#features" class="btn btn-primary btn-lg px-4">Get Started</a>
+                <a href="#documentation" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="bg-dark">
+        <div class="container">
+            <h2 class="text-center mb-5">Features</h2>
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title h5">Feature One</h3>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title h5">Feature Two</h3>
+                            <p class="card-text">Vivamus luctus eros aliquet convallis ultricies. Mauris augue massa.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title h5">Feature Three</h3>
+                            <p class="card-text">Etiam at dui dignissim, elementum nunc in, convallis nisl. Donec.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 4 -->
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title h5">Feature Four</h3>
+                            <p class="card-text">Praesent semper feugiat nibh sed pulvinar proin gravida hendrerit lectus.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 5 -->
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title h5">Feature Five</h3>
+                            <p class="card-text">Amet nisl suscipit adipiscing bibendum est ultricies integer quis auctor.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 6 -->
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body">
+                            <h3 class="card-title h5">Feature Six</h3>
+                            <p class="card-text">Elementum tempus egestas sed sed risus pretium quam vulputate dignissim.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section id="examples" class="bg-secondary">
+        <div class="container">
+            <h2 class="text-center mb-5">Examples</h2>
+            <p class="text-center lead">This section would contain examples of your product in action.</p>
+        </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="bg-dark">
+        <div class="container">
+            <h2 class="text-center mb-5">Our Philosophy</h2>
+            <p class="text-center lead">This section would explain the core principles behind your project.</p>
+        </div>
+    </section>
+
+    <!-- Documentation Section -->
+    <section id="documentation" class="bg-secondary">
+        <div class="container">
+            <h2 class="text-center mb-5">Documentation</h2>
+            <p class="text-center lead">This section would link to or contain documentation for your product.</p>
+        </div>
+    </section>
