@@ -133,6 +133,20 @@ Use `cex -D config` to reset all project config flags to defaults
 
 
 ## Code example
+### Hello world in CEX
+```c
+#define CEX_IMPLEMENTATION
+#include "cex.h"
+
+int
+main(int argc, char** argv)
+{
+    io.printf("MOCCA - Make Old C Cexy Again!\n");
+    return 0;
+}
+```
+
+### Holistic function
 ```c
 // CEX has special exception return type that forces the caller to check return type of calling
 //   function, also it provides support of call stack printing on errors in vanilla C

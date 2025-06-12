@@ -18,7 +18,18 @@ website:
         href: https://github.com/alexveden/cex
   sidebar:
     style: "docked"
-    contents: auto
+    contents:
+      - section: "Introduction"
+        contents:
+          - getting_started.md
+          - install.md
+          - features.md
+          - examples.md
+      - section: "CEX language"
+        contents:
+          - cex_language/basics.md
+          - cex_language/errors.md
+          - cex_language/memory.md
 
   search: 
     location: sidebar
@@ -31,6 +42,7 @@ format:
     toc: true
     toc-location: body
     highlight-style: github
+    html-math-method: plain
     syntax-definitions:
       - _include/cex_syntax.xml 
 
