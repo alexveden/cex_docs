@@ -102,7 +102,7 @@ Allocator scoping:
 * `mem$scope(arena_or_tmem$, scope_var) { ... }` - opens new memory scope (works only with arena allocators or temp allocator)
 
 
-### Dynamic Arenas
+### Dynamic arenas
 Dynamic arenas using an array of dynamically allocated pages, each page has static size and allocated on heap. When you allocate memory on arena and there is enough room on page, the arena allocates this chunk of memory inside page (simply moving a pointer without real allocation). If your memory request is big enough, the arena creates new page while keeping all old pages untouched and manages new allocation on the new page.
 
 Arenas are designed to work with `mem$scope()`, this allowing you create temporary memory allocation, without worrying about cleanup. Once scope is left, the arena will deallocate all memory and return to the initial state. This approach allowing to use up to 32 levels of `mem$scope()` nesting. Essentially it is exact mechanism that fuels `tmem$` - temporary allocator in CEX.
@@ -211,7 +211,7 @@ CEX arenas are designed to be always growing, if your code pattern is based on h
 When run in test mode (or specifically `#ifdef CEX_TEST` is true) the memory allocation model in CEX includes some extra safety capabilities:
 
 1. Heap based allocator (`mem$`) starts tracking memory leaks, comparing number of allocations and frees.
-2. `mem$malloc()` - return uninitialized memory with `0x7f` byte pattern
+2. `mem$malloc()` - return uninitialized memory with `0xf7` byte pattern
 3. If Address Sanitizer is available all allocations for arenas and heap will be surrounded by poisoned areas. If you see use-after-poison errors, it's likely a sign of use-after-free or out of bounds access in `tmem$`. Try to switch your code to the `mem$` allocator if possible to triage the exact reason of the error.
 4. Allocators do sanity checks at the end of the each unit test case
 
@@ -244,11 +244,95 @@ mem$scope(tmem$, _)
 
 
 ## Advanced topics
-### Performance
+### Performance tips
+#### TempAllocator makes CPU cache hot
+If we use `mem$scope(tmem$)` a lot, the ArenaAllocator re-uses same memory pages, therefore these memory areas will be prefetched by CPU cache, which will be beneficial for performance. The ArenaAllocator in general works like a stack, with automatic memory cleanup at the scope index.
+
+#### Arena allocation is cheap
+ArenaAllocator implements memory allocation by moving a memory pointer back and forth, it doesn't take much for allocating small chunks if there is no need for requesting memory from the OS for the new arena page.
+
+#### Be careful with ArenaAllocator when you need to reallocate a lot
+AllocatorArena and temporary allocator do not reuse blank chunks of the freed memory in pages, they simply allocate new memory. This might be a problem when you try to dynamically resize some container (e.g. dynamic array `arr$`), which could lead to uncontrollable growth of arena pages and therefor performance degradation.
+
+On the other hand, it's totally fine to pre-allocate some capacity for your needs upfront. Just try to be mindful about you memory allocation and usage patterns.
+
+### When to use arena or heap allocator
+
+#### ArenaAllocator and `tmem$` use cases 
+ArenaAllocator works great when you need disposable memory for a temporary needs or you have limited boundaries in time and space for a program operation. For example, read file, process it, calculate stuff, close it, done.  
+
+Another great benefit of arenas is stability of memory pointers, once memory is allocated it sits there at the same place.
+
+Arenas simplifies managing memory for small objects, so you don't need to write extra memory management logic for each small allocation, everything will be cleared at scope exit.
+
+#### HeapAllocator (`mem$`) use cases
+HeapAllocator is simply system allocator, backed by malloc/free. You can use it for long living or frequently resizable objects (e.g. dynamic arrays or hashmaps). Works best for bigger allocations with longer lives.
 
 
-### When to use Arena or Heap allocators
-### UnitTesting and Memory Leaks
-### Out-of-bounds access / poisoning
+### UnitTesting and memory leaks
+When you run CEX allocators in unit test code, they apply extra sanity check logic for helping you to debug memory related issues:
+
+* New `mem$malloc` allocations for `mem$/tmem$` are filled by `0xf7` byte pattern, which indicates uninitialized memory.
+* `mem$` allocator tracks number of allocations and deallocations and emits unit test `[LEAK]` warning (in the case if ASAN is disabled)
+* There are some small poisoned areas around allocations by `mem$/tmem$` which trigger ASAN `use-after-poison` crash (read/write), or check validity of poison pattern inside these areas when ASAN is disabled.
+* After each test CEX automatically performs `tmem$` sanity checks in order to find memory corruption
+
+> [!TIP]
+> 
+> If you need to debug memory leaks for your code consider to use `mem$` (heap based) allocation, which utilizes ASAN memory leak tracking mechanisms.
+
+### Out-of-bounds access and poisoning
+CEX encourage to use ASAN everywhere for debug needs. ASAN works great for handling out-of-bounds access for heap allocated memory. It's a little bit difficult for arenas, because they use big pages of memory (we own it), therefore no complaints from the ASAN. In order to fix this `tmem$` and AllocatorArena add poison areas around each allocation which triggers `use-after-poison` crash. If you face it, make sure that your program doesn't read/write out of out-of-bounds, try to temporarily substitute `tmem$` by `mem$` to get more precise error information.
 
 ## Code patterns
+### Using temporary memory scope
+
+```c
+mem$scope(tmem$, _) 
+{
+    u8* p2 = mem$malloc(_, 100);
+} 
+```
+
+> [!NOTE]
+> 
+> CEX convention to use `_` variable as temp allocator.
+
+### Using heap allocator
+```c
+u8* p2 = mem$malloc(mem$, 100); // mem$ is a global variable for HeapAllocator
+mem$free(mem$, p2); // we must manually free it
+uassert(p2 == NULL); // p2 set to NULL by mem$free()
+```
+
+
+### Opening new ArenaAllocator scope 
+
+```c
+mem$arena(4096, arena)
+{
+    u8* p2 = mem$malloc(arena, 10040);
+}
+```
+
+### Mixing ArenaAllocator and temp allocator
+
+```c
+mem$arena(4096, arena)
+{
+    // We will store result in the arena
+    u8* result = mem$malloc(arena, 10040);
+
+    mem$scope(tmem$, _) 
+    {
+        // Do a temporary calculations with tmem$
+        u8* p2 = mem$malloc(_, 100);
+
+        // Copy persistent results here
+        result[0] = p[0];
+    }  // NOTE: p2 and all temp data freed
+    
+    // result remains
+} 
+// result freed
+```

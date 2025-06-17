@@ -89,12 +89,39 @@ We need moar args!
 Check [Error handling ](errors.md) section for more details about error implementation .
 
 ## Memory management
+CEX tries to adopt allocator-centric approach to memory management, which help to follow those principles:
+
+* **Explicit memory allocation.** Each object (class) or function that may allocate memory has to have an allocator parameter. This requirement, adds explicit API signature hints, and communicates about memory implications of a function without deep dive into documentation or source code.
+* **Transparent memory management.** All memory operations are provided by `IAllocator` interface, which can be interchangeable allocator object of different type.
+* **Memory scoping**. When possible memory usage should be limited by scope, which naturally regulates lifetimes of allocated memory and automatically free it after exiting scope.
+* **UnitTest Friendly**. Allocators allowing implementation of additional levels of memory safety when run in unit test environment. For example, CEX allocators add special poisoned areas around allocated blocks, which trigger address sanitizer when this region accesses with user code. Allocators open door for a memory leak checks, or extra memory error simulations for better out-of-memory error handling.
+* **Standard and Temporary allocators**. Sometimes it's useful to have initialized allocator under your belt for short-lived temporary operations. CEX provides two global allocators by default: `mem$` - is a standard heap allocator using `malloc/realloc/free`, and `tmem$` - is dynamic arena allocator of small size (about 256k of per page).  
+
+This is a small example of key memory management concepts in CEX:
+
+```c
+mem$scope(tmem$, _) /* <1> */
+{
+    arr$(char*) incl_path = arr$new(incl_path, _); /* <2> */
+    for$each (p, alt_include_path) {
+        arr$push(incl_path, p);  /* <3> */
+        if (!os.path.exists(p)) { log$warn("alt_include_path not exists: %s\n", p); }
+    }
+} /* <4> */
+```
+1. Initializes a temporary allocator (`tmem$`) scope in `mem$scope(tmem$, _) {...}` and assigns it as a variable `_` (you can use any name).
+2. Initializes dynamic array with the scoped allocator variable `_`, allocates new memory.
+3. May allocate memory
+4. All memory will be freed at exit from this scope
+
+Check [Memory management](memory.md) section for more details about memory handling.
+
 
 ## Strings
 There are several types of strings in CEX, each serves its own purpose. 
 
-* `str` - is the most common, it is not a type but a namespace (collection of functions) which work with plain `char*` but in a safer way than vanilla libc. Inputs are NULL tolerant, and output may return NULL on errors.  
-* `sbuf_c` - dynamic string builder container which supports append formatting and dynamic resizing. 
+* `str` - is the most common, it is not a type but a namespace (collection of functions) which work with plain `char*`, but in a safer way than vanilla libc. Inputs are NULL tolerant, and output may return NULL on errors.  
+* `sbuf_c` - dynamic string builder container which supports append formatting and dynamic resizing. It's fully `char*` compatible null-terminated string type.
 * `str_s` - read-only string view (slice) type, provides `buf+len` strings and has dedicated namespace `str.slice` for dealing with string slices. Strings slices may or may not be null-terminated. This is a goto type when you need dealing with substrings, without memory allocation. It has dedicated `printf` format `%S`.
 
 > [!TIP] 
