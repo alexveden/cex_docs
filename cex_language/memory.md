@@ -182,6 +182,7 @@ There are two general purpose allocators globally available out of the box for C
 #### Do cross-scope memory access carefully
 Never reallocate memory from one scope, in the nested scope, which will automatically lead to use-after-free issue. This is a bad example:
 ```c
+// BAD!
 mem$scope(tmem$, _)
 {
     u8* p2 = mem$malloc(_, 100); /* <1> */
@@ -201,7 +202,7 @@ mem$scope(tmem$, _)
 
 > [!TIP]
 > 
-> CEX does its best to catch these cases in unit test mode, it will raise an assertion at the `mem$realloc` line with some meaningful error about this. Standard CEX collections like dynamic arrays `arr$` and hashmap `hm$` also get triggered then they need to resize in a different level of `mem$scope`.
+> CEX does its best to catch these cases in unit test mode, it will raise an assertion at the `mem$realloc` line with some meaningful error about this. Standard CEX collections like dynamic arrays `arr$` and hashmap `hm$` also get triggered when they need to resize in a different level of `mem$scope`.
 
 #### Be careful with reallocations on arenas
 CEX arenas are designed to be always growing, if your code pattern is based on heavily reallocating memory, the arena growth may lead to performance issues, because each reallocation may trigger memory copy with new page creation. Consider pre-allocate some reasonable capacity for your data when working with arenas (including temp allocator). However, if you're reallocating the **exact** last pointer, the arena might do it in place on the same page.
@@ -214,10 +215,38 @@ When run in test mode (or specifically `#ifdef CEX_TEST` is true) the memory all
 3. If Address Sanitizer is available all allocations for arenas and heap will be surrounded by poisoned areas. If you see use-after-poison errors, it's likely a sign of use-after-free or out of bounds access in `tmem$`. Try to switch your code to the `mem$` allocator if possible to triage the exact reason of the error.
 4. Allocators do sanity checks at the end of the each unit test case
 
+#### Be careful with break/continue
+`mem$scope/mem$arena` are macros backed by `for` loop, be careful when you use them inside loops and trying to `break/continue` outer loop. 
+```c
+// BAD!
+for(u32 i = 0; i < 10; i++){
+{
+    mem$scope(tmem$, _)
+    {
+        u8* p2 = mem$malloc(_, 100);
+        if(p2[1] == '0') { 
+            break; // OOPS, this will break mem$scope not a outer for loop
+        }
+    }
+} 
+```
+#### Never return pointers from scope
+Function exit will lead to memory cleanup after memory scope `p2` address now is invalid. You might get use-after-poison or use-after-free ASAN crash. Or `0xf7` pattern of data when running in test environment without ASAN.
+
+```c
+// BAD!
+mem$scope(tmem$, _)
+{
+    u8* p2 = mem$malloc(_, 100);
+    return p2; // BAD! This address will be freed at scope exit
+}
+```
 
 
 ## Advanced topics
 ### Performance
+
+
 ### When to use Arena or Heap allocators
 ### UnitTesting and Memory Leaks
 ### Out-of-bounds access / poisoning
