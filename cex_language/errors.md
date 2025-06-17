@@ -380,7 +380,7 @@ fail:
 
 ### Caveats
 
-Most of `e$except_*` macros are backed by `for()` loop, so you have to be careful when you nest them inside outer loops and try to `break`/`continue` outer loop on error. 
+Most of `e$excep_*` macros are backed by `for()` loop, so you have to be careful when you nest them inside outer loops and try to `break`/`continue` outer loop on error. 
 
 In my opinion using `e$except_` inside loops is generally bad idea, and you should consider:
 
