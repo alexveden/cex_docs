@@ -30,6 +30,7 @@ website:
           - cex_language/basics.md
           - cex_language/errors.md
           - cex_language/memory.md
+          - cex_language/strings.md
           - cex_language/data_structures.md
 
   search: 
