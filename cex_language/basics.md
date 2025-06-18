@@ -128,8 +128,21 @@ There are several types of strings in CEX, each serves its own purpose.
 >
 > To get brief cheat sheet on functions list via Cex CLI type `./cex help str` or `./cex help sbuf`
 
+Check [Strings](strings.md) section for more details.
+
 ## Data Structures 
-## Working with arrays
+There is a lack of support for data structures in C, typically it's up to developer to decide what to do. However, I noticed that many other C projects tend to reimplement over and over again two core data structures, which are used in 90% of cases: dynamic arrays and hashmaps.
+
+Key features of the CEX data structures:
+
+* Allocator based memory management - allowing you to decide memory model and tweak it anytime.
+* Type safety and LSP support - each DS must have a specific type and support LSP suggestions.
+* Generic types - data structures must be universal.
+* Seamless C compatibility - allowing accessing CEX DS as plain C arrays and pass them as pointers.
+* Support of any item type.
+
+See more information about [data structures and arrays in CEX](data_structures.md)
+
 ## Code Quality Tools
 ## Typical Project Structure
 ## Build system

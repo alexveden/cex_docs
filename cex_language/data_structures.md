@@ -1,5 +1,5 @@
 ---
-title: "Data structures"
+title: "Data structures and arrays"
 ---
 
 ## Data structures in CEX
@@ -146,7 +146,6 @@ mem$scope(tmem$, _) /* <1> */
 
 
 :::
-
 
 ## Hashmaps
 
@@ -357,3 +356,174 @@ test$case(test_hashmap_basic_iteration)
 ```
 
 :::
+
+## Working with arrays
+
+Arrays are probably most used concept in any language, with C arrays may have many different forms. Unfortunately, the main problem of working with arrays in C is a specialization of methods and operations, each type of array may require special iteration macro, or function for getting array length or element.
+
+Collection types in C:
+
+* Static arrays `i32 arr[10]`
+* Dynamic arrays as pointers `(i32* arr, usize arr_len)`
+* Custom dynamic arrays `dynamic_array_push_back(&int_array, &i);`
+* Char buffers `char buf[1024]`
+* Null-terminated strings and slices
+* Hashmaps
+
+Cex tries to solve this by unification of all arrays operations around standard design principles, without getting too far away from standard C.
+
+### `arr$len` unified length
+
+`arr$len(array)` macro is a ultimate tool for getting lengths of arrays in CEX. It supports: static arrays, char buffers, string literals, dynamic arrays of CEX `arr$` and hashmaps of CEX `hm$`. Also it's a NULL resilient macro, which returns 0 if `array` argument is NULL.
+
+> [!NOTE]
+> 
+> Not all array pointers are supports by `arr$len` (only dynamic arrays or hashmaps are valid), however in debug mode `arr$len` will raise an assertion/ASAN crash if you passed wrong pointer type there.
+
+Example:
+```c
+test$case(test_array_len)
+{
+    arr$(int) array = arr$new(array, mem$);
+    arr$pushm(array, 1, 2, 3);
+
+    // Works with CEX dynamic arrays
+    tassert_eq(arr$len(array), 3);
+
+    // NULL is supported, and emits 0 length
+    arr$free(array);
+    tassert(array == NULL); 
+    tassert_eq(arr$len(array), 0); // NOTE: NULL array - len = 0
+
+    // Works with static arrays
+    char buf[] = {"hello"}; 
+    tassert_eq(arr$len(buf), 6); // NOTE: includes null term
+
+    // Works with arrays of given capacity
+    char buf2[10] = {0};
+    tassert_eq(arr$len(buf2), 10);
+
+    // Type doesn't matter
+    i32 a[7] = {0};
+    tassert_eq(arr$len(a), 7);
+
+    // Works with string literals
+    tassert_eq(arr$len("CEX"), 4); // NOTE: includes null term
+
+    // Works with CEX hashmap
+    hm$(int, int) intmap = hm$new(intmap, mem$);
+    hm$set(intmap, 1, 3);
+    tassert_eq(arr$len(intmap), 1);
+
+    hm$free(intmap);
+
+    return EOK;
+}
+
+```
+
+### Accessing elements of array is unified
+
+```c
+test$case(test_array_access)
+{
+    arr$(int) array = arr$new(array, mem$);
+    arr$pushm(array, 1, 2, 3);
+
+    // Dynamic array access is natural C index
+    tassert_eq(array[2], 3);
+    // tassert_eq(arr$at(array, 3), 3); // NOTE: this is bounds checking access, with assertion 
+    arr$free(array);
+
+    // Works with static arrays
+    char buf[] = {"hello"}; 
+    tassert_eq(buf[1], 'e'); 
+
+    // Works with CEX hashmap
+    hm$(int, int) intmap = hm$new(intmap, mem$);
+    hm$set(intmap, 1, 3);
+    hm$set(intmap, 2, 5);
+    tassert_eq(arr$len(intmap), 2);
+
+    // Accessing hashmap as array
+    // NOTE: hashmap elements are ordered until first deletion
+    tassert_eq(intmap[0].key, 1);
+    tassert_eq(intmap[0].value, 3);
+
+    tassert_eq(intmap[1].key, 2);
+    tassert_eq(intmap[1].value, 5);
+
+    hm$free(intmap);
+
+    return EOK;
+}
+```
+
+### CEX way of iteration over arrays
+
+CEX introduces an unified `for$*` macros which helps with dealing with looping, these are typical patters for iteration:
+
+* `for$each(it, array, [array_len])` - iterates over array, `it` represents value of array item. `array_len` is optional and uses `arr$len(array)` by default, or you might explicitly set it for iterating over arbitrary C pointer+len arrays.
+* `for$eachp(it, array, [array_len])` - iterates over array, `it` represent a pointer to array item. `array_len` is inferred by default.
+* `for$iter(it_val_type, it, iter_funct)` - a special iterator for non-indexable collections or function based iteration, tailored for customized iteration of unknown length.
+* `for(usize i = 0; i < arr$len(array); i++)` - classic also works :)
+
+```c
+test$case(test_array_iteration)
+{
+    arr$(int) array = arr$new(array, mem$);
+    arr$pushm(array, 1, 2, 3);
+
+    i32 nit = 0; // it's only for testing
+    for$each(it, array) {
+        tassert_eq(it, ++nit);
+        io.printf("el=%d\n", it);
+    }
+    // Prints: 
+    // el=1
+    // el=2
+    // el=3
+
+    nit = 0;
+    // NOTE: prefer this when you work with bigger structs to avoid extra memory copying
+    for$eachp(it, array) {
+        // TIP: making array index out of `it`
+        usize i = it - array;
+        tassert_eq(i, nit);
+
+        // NOTE: it now is a pointer
+        tassert_eq(*it, ++nit);
+        io.printf("el[%zu]=%d\n", i, *it);
+    }
+    // Prints: 
+    // el[0]=1
+    // el[1]=2
+    // el[2]=3
+
+    // Static arrays work as well (arr$len inferred)
+    i32 arr_int[] = {1, 2, 3, 4, 5};
+    for$each(it, arr_int) {
+        io.printf("static=%d\n", it);
+    }
+    // Prints:
+    // static=1
+    // static=2
+    // static=3
+    // static=4
+    // static=5
+
+
+    // Simple pointer+length also works (let's do a slice)
+    i32* slice = &arr_int[2];
+    for$each(it, slice, 2) {
+        io.printf("slice=%d\n", it);
+    }
+    // Prints:
+    // slice=3
+    // slice=4
+
+    arr$free(array);
+    return EOK;
+}
+```
+
